@@ -121,18 +121,24 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         
-    - name: Login to ACR
-      run: az acr login --name ${{ secrets.ACR_LOGIN_SERVER }}
+    # Use Docker login - works with any ACR URL format
+    - name: Login to ACR using Docker
+      run: |
+        echo "Logging into ACR: ${{ secrets.ACR_LOGIN_SERVER }}"
+        echo "${{ secrets.ACR_PASSWORD }}" | docker login ${{ secrets.ACR_LOGIN_SERVER }} --username ${{ secrets.ACR_USERNAME }} --password-stdin
       
     - name: Build and push Docker image
       run: |
-        docker build -t ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ steps.image-tag.outputs.tag }} .
-        docker push ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ steps.image-tag.outputs.tag }}
+        FULL_IMAGE_NAME="${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ steps.image-tag.outputs.tag }}"
+        echo "Building image: $FULL_IMAGE_NAME"
+        docker build -t $FULL_IMAGE_NAME .
+        echo "Pushing image: $FULL_IMAGE_NAME"
+        docker push $FULL_IMAGE_NAME
         
     - name: Scan container image
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ steps.image-tag.outputs.tag }}
+        image-ref: ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ steps.image-tag.outputs.tag }}
         format: 'sarif'
         output: 'trivy-image-results.sarif'
         
