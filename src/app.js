@@ -4,7 +4,7 @@ const port = process.env.PORT || 8080;
 
 app.get('/', (req, res) => {
   res.json({ 
-    message: 'Hello DevSecOps World from Duy Nguyen!', 
+    message: 'Hello DevSecOps World from Duy Nguyen 123!', 
     version: '1.0.0',
     timestamp: new Date().toISOString()
   });
