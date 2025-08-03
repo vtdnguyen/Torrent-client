@@ -211,7 +211,7 @@ jobs:
     
     - name: Attach ACR to AKS
       run: |
-        az aks update -n ${{ secrets.AKS_CLUSTER_NAME }} -g ${{ secrets.AKS_RESOURCE_GROUP }} --attach-acr ${{ env.ACR_USERNAME }}
+        az aks update -n ${{ secrets.AKS_CLUSTER_NAME }} -g ${{ secrets.AKS_RESOURCE_GROUP }} --attach-acr ${{ secrets.ACR_USERNAME }}
     
     - name: Test cluster connectivity
       run: |
