@@ -198,6 +198,13 @@ jobs:
         
     - name: Setup kubectl
       uses: azure/setup-kubectl@v3
+
+    - name: Install kubelogin
+      run: |
+        curl -LO https://github.com/Azure/kubelogin/releases/latest/download/kubelogin-linux-amd64.zip
+        unzip kubelogin-linux-amd64.zip
+        sudo mv bin/linux_amd64/kubelogin /usr/local/bin/
+        chmod +x /usr/local/bin/kubelogin
       
     - name: Get AKS credentials
       run: az aks get-credentials --resource-group ${{ secrets.AKS_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }}
