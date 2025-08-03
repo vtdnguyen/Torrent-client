@@ -208,11 +208,7 @@ jobs:
       
     - name: Get AKS credentials
       run: az aks get-credentials --resource-group ${{ secrets.AKS_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }}
-    
-    - name: Attach ACR to AKS
-      run: |
-        az aks update -n ${{ secrets.AKS_CLUSTER_NAME }} -g ${{ secrets.AKS_RESOURCE_GROUP }} --attach-acr ${{ secrets.ACR_USERNAME }}
-    
+  
     - name: Test cluster connectivity
       run: |
         echo "Testing cluster connectivity..."
