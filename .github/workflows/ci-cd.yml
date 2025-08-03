@@ -209,10 +209,15 @@ jobs:
     - name: Get AKS credentials
       run: az aks get-credentials --resource-group ${{ secrets.AKS_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }}
           
+    - name: Test cluster connectivity
+      run: |
+        echo "Testing cluster connectivity..."
+        kubectl cluster-info --request-timeout=30s
+        
     - name: Deploy to Production
       run: |
         sed -i 's|{{IMAGE_TAG}}|${{ needs.build-container.outputs.image-tag }}|g' k8s/deployment.yml
         sed -i 's|{{ACR_LOGIN_SERVER}}|${{ env.ACR_LOGIN_SERVER }}|g' k8s/deployment.yml
         sed -i 's|{{IMAGE_NAME}}|${{ env.IMAGE_NAME }}|g' k8s/deployment.yml
-        kubectl apply -f k8s/namespace.yml
-        kubectl apply -f k8s/ -n production
+        kubectl apply -f k8s/namespace.yml --request-timeout=60s
+        kubectl apply -f k8s/ -n production --request-timeout=60s
